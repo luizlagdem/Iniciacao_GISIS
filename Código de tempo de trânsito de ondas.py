@@ -12,8 +12,8 @@ def refracted_wave(d, z, v1, v2):
 
 # Set variables
 z = 100
-v1 = 2000
-v2 = 3000
+v1 = 5e2
+v2 = 5e3
 d = np.linspace(0, 2000, 500)
 
 # Calcular tempos
