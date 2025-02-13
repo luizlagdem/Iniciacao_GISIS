@@ -1,0 +1,89 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def wavelet_ricker(t, f):
+    aux = (np.pi * f * t)**2
+    ricker = (1 - 2 * aux) * np.exp(-aux)
+    return ricker
+
+# Defining parameters
+dt = 0.0001       # samples
+nt = 1001         # time samples
+t = np.linspace(0, nt*dt, nt, endpoint=False) # time
+w = wavelet_ricker(t - 0.05, 60) # wavelet amplitude 
+
+# Wavelet Plot 
+plt.figure()
+plt.plot(t, w, '--.')
+plt.title("Wavelet de Ricker (f = 60 Hz)")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Amplitude")
+plt.show()
+
+# Defining the constant states of velocity
+vel = np.zeros(nt)
+vel[0:nt//3] = 1500
+vel[nt//3:2*nt//3] = 2500
+vel[2*nt//3:] = 2000
+
+# Velocity plot
+plt.figure()
+plt.plot(t, vel, '--')
+plt.title("Modelo de Velocidade")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Velocidade (m/s)")
+plt.gca().invert_yaxis()
+plt.show()
+
+# Defining the constant states of denisty
+dens = np.zeros(nt)
+dens[0:nt//3] = 2000 
+dens[nt//3:2*nt//3] = 2400 
+dens[2*nt//3:] = 2200
+
+# Density plot
+plt.figure()
+plt.plot(t, dens, '--')
+plt.title("Modelo de Densidade")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Densidade (kg/m³)")
+plt.gca().invert_yaxis()
+plt.show()
+
+# Calculating the acoustic impedance 
+impedance = vel * dens
+
+# Impedance Plot
+plt.figure()
+plt.plot(t, impedance, '--')
+plt.title("Impedância do Meio")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Impedância (kg/m²·s)")
+plt.gca().invert_yaxis()
+plt.show()
+
+# Definining and processing reflectivity impedance
+# R = (Z2 - Z1) / (Z2 + Z1)
+reflectivity_imp = np.zeros(nt)
+reflectivity_imp[1:] = (impedance[1:] - impedance[:-1]) / (impedance[1:] + impedance[:-1])
+
+# Reflectivity impedance Plot
+plt.figure()
+plt.plot(reflectivity_imp, t, '--')
+plt.title("Refletividade Calculada a partir da Impedância")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Coeficiente de Reflexão")
+plt.gca().invert_yaxis()
+plt.show()
+
+# Defining convolution
+synthetic_trace = np.convolve(reflectivity_imp, w, mode="same")
+
+# Convolution Plot
+plt.figure()
+plt.plot(synthetic_trace, t, '--')
+plt.title("Sismograma Sintético")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Amplitude")
+plt.gca().invert_yaxis()
+plt.show()
