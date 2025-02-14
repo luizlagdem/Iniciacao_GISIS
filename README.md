@@ -1,2 +1,2 @@
-# Iniciacao_GISIS
+# Projetos GISIS
 Projetos iniciais vinculados ao laboratorio GISIS
